@@ -1,0 +1,991 @@
+/*Egy egyszerű példa az Express.js használatára egy egyszerű webalkalmazás létrehozásához:
+
+    Először is, telepítsd a Node.js-t, ha még nincs telepítve a számítógépedre. Az Express.js egy Node.js keretrendszer.
+
+    Hozz létre egy új mappát a projekt számára, majd nyisd meg a terminált ebben a mappában.
+
+    Inicializáld a Node.js projektet a következő paranccsal:
+
+    npm init -y
+
+Telepítsd a Express.js modult a következő paranccsal: npm install express
+
+    Hozz létre egy fő alkalmazásfájlt (például app.js vagy server.js) a projekt mappájában, és nyisd meg egy szövegszerkesztőben.
+
+    Írd be a következő kódot az alkalmazásfájlba:
+
+    const express = require('express');
+const app = express();
+const port = 3000; // Válaszd meg a kívánt portot
+
+// Az alábbi példakódban létrehozunk egy egyszerű HTTP GET útvonalat
+app.get('/', (req, res) => {
+  res.send('Hello, Express.js!');
+});
+
+// Indítsuk el a szervert a kiválasztott porton
+app.listen(port, () => {
+  console.log(`Az Express.js szerver fut a http://localhost:${port} címen`);
+});
+
+Mentsd el a fájlt, majd a terminálban indítsd el az alkalmazást a következő paranccsal: node app.js
+
+Ezután megnyithatod a webböngésződet, és a http://localhost:3000 címen meg fogod találni az alkalmazásodat, ami a "Hello, Express.js!" üzenetet fogja megjeleníteni.
+
+*/
+
+
+
+/* 
+    A GET és POST HTTP kérések két különböző módja annak, hogy a kliens (általában egy böngésző) kommunikáljon a szerverrel webes alkalmazásokban. Mindkét kérés típusnak saját szerepe és jellemzői vannak:
+GET kérés:
+
+    Működése: A GET kérés a kliens által kért adatok lekérdezésére szolgál. Ezt általában a böngésző címsorába írt URL vagy egy hivatkozás kattintásával indítja a felhasználó.
+
+    Adatátvitel: A GET kérés adatait a URL részeként küldi a szervernek. Például: http://example.com/page?name=John&age=30. Adatai nyilvánosak és könnyen láthatók a böngésző címsorában.
+
+    Biztonság: A GET kérések kisebb biztonságot nyújtanak, mivel az adatok nyilvánosak, könnyen elérhetők és könnyen módosíthatók.
+
+    Toborzás: A GET kérések gyakran használják a weboldalak közötti navigációhoz és az adatok kereséséhez.
+
+    Mintafelhasználás: A példa az alábbi:
+
+GET /api/users?name=John&age=30 HTTP/1.1
+Host: example.com
+
+POST kérés:
+
+    Működése: A POST kérés az adatok küldésére és a szerveren történő feldolgozására szolgál. Gyakran űrlapok elküldésére és érzékeny adatok, például jelszavak küldésére használják.
+
+    Adatátvitel: A POST kérések az adatokat a HTTP kérés teste (body) részében küldik, így azok nem jelennek meg a böngésző címsorában. Az adatok rejtettebbek és biztonságosabbak.
+
+    Biztonság: A POST kérések általában biztonságosabbak, mivel az adatok nem jelennek meg nyilvánosan a böngészőben, és nehezebben módosíthatók.
+
+    Toborzás: A POST kéréseket használják akkor, amikor adatokat kell beküldeni a szerverre, például regisztrációkor vagy űrlapok elküldésekor.
+
+    Mintafelhasználás: A példa az alábbi:
+
+    POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+username=johndoe&password=secret
+
+*/
+
+
+
+
+
+Get és Post
+
+/* 
+
+
+
+
+
+    GET kérés kezelése Express.js segítségével:
+
+    Útvonal definiálása: Először is definiálnod kell egy útvonalat (route), amelyhez a GET kérést kapcsolni szeretnéd.
+    Ezt az Express get metódusával teheted meg.
+
+    const express = require('express');
+const app = express();
+
+// Az alábbi példakódban a /route útvonalhoz rendelünk egy GET kérést
+app.get('/route', (req, res) => {
+  // Itt írd meg, mit szeretnél válaszként visszaküldeni a kliensnek
+  res.send('Ez egy GET kérés válasza');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+    Kérés feldolgozása: Amikor a kliens egy GET kérést indít a /route útvonalhoz, az Express automatikusan észleli ezt a kérést,
+     és a hozzárendelt callback függvényt hívja meg. A req objektum tartalmazza a kérés adatait,
+      míg a res objektum segítségével válaszüzenetet küldhetsz vissza a kliensnek.
+
+POST kérés kezelése Express.js segítségével:
+
+    Útvonal definiálása: Ahhoz, hogy POST kérést kezeljünk Express-ben, definiálnunk kell egy útvonalat a post metódussal.
+
+    const express = require('express');
+const app = express();
+
+// Az alábbi példakódban a /route útvonalhoz rendelünk egy POST kérést
+app.post('/route', (req, res) => {
+  // Itt feldolgozhatod a POST kérést és válaszüzenetet küldhetsz vissza
+  res.send('Ez egy POST kérés válasza');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+    Kérés feldolgozása: Amikor a kliens egy POST kérést indít a /route útvonalhoz, az Express ugyanúgy észleli ezt a kérést,
+     mint a GET kérést, de most a req objektumban található adatok a POST kérés testében találhatók.
+      Az Express lehetővé teszi, hogy middleware-k segítségével feldolgozd és validáld az adatokat.
+
+    Válasz küldése: A POST kérés kezelése során is használhatod a res objektumot a válasz elküldésére a kliensnek,
+     például a feldolgozott adatokkal vagy visszajelzéssel.
+*/
+
+
+
+
+
+MiddleWare
+
+
+
+
+/* 
+    A middleware egy olyan szoftvertartalmi réteg vagy függvény, amelyet egy szoftveralkalmazás két része között helyeznek el,
+     hogy valamilyen specifikus funkciót hajtson végre a kérések és válaszok feldolgozása közben.
+      A middleware egy közvetítőréteg, amely lehetővé teszi a különböző komponensek, 
+      szolgáltatások vagy könyvtárak integrálását egy alkalmazásba. 
+      Az Express.js keretrendszerben a middleware-ek kulcsfontosságú szerepet játszanak.
+
+Az Express.js-ben a middleware-ek olyan függvények, amelyeket sorban hajtanak végre a kérés feldolgozásakor,
+ mielőtt eljutnánk a végpontokhoz vagy útvonalakhoz. Itt van néhány példa arra, mire használhatók a middleware-ek:
+
+    Logger middleware: A kérések és válaszok adatainak naplózása vagy nyomkövetése.
+     Például megjegyzések írása az összes beérkező kéréshez, hogy nyomon követhessük a szerver működését.
+
+    Auth middleware: Felhasználói azonosítás és hitelesítés ellenőrzése. 
+    Lehetővé teszi a hozzáférési jogok kezelését és azt, hogy csak engedélyezett felhasználók férjenek hozzá bizonyos útvonalakhoz vagy szolgáltatásokhoz.
+
+    Body parser middleware: A HTTP kérés testének feldolgozása, például JSON vagy form adatok beolvasása és feldolgozása,
+     hogy az alkalmazás könnyen hozzáférhessen ezekhez az adatokhoz.
+
+    Compression middleware: Válaszok tömörítése, hogy csökkentse a hálózati adatforgalmat és felgyorsítsa az alkalmazást.
+
+    Error handling middleware: Hibakezelés és hibák kezelése a kérések feldolgozása során.
+     Például a próbálkozás a hibák kezelésével, amikor egy kérés feldolgozása közben hiba történik,
+      és válaszban hibaüzenet küldése a kliensnek.
+
+    CORS middleware: Cross-Origin Resource Sharing (CORS) beállítások kezelése, 
+    hogy a kliens oldali JavaScript alkalmazások hozzáférhessenek más erőforrásokhoz más domain-ekről.
+
+*/
+
+
+
+
+
+Routers
+
+
+
+
+
+/* 
+    Az Express.js keretrendszerben a routerek (routers) olyan objektumok, amelyek lehetővé teszik az útvonalak (routes) és azokhoz kapcsolódó műveletek szervezését és csoportosítását. 
+    A routerek segítségével az alkalmazásod útvonalainak és hozzájuk kapcsolódó logikájának szétválaszthatod a kódodat, ami a kód karbantarthatóságát és olvashatóságát javítja.
+
+A routerek segítségével különböző útvonalakat és hozzájuk tartozó műveleteket definiálhatsz egy külön JavaScript fájlban,
+ majd ezeket a routereket integrálhatod az Express alkalmazásodba. Ez különösen hasznos, ha az alkalmazásod nagy vagy komplex, 
+ és sok útvonallal rendelkezik.
+
+Példa a router használatára Express.js-ben:
+
+    Első lépésként hozz létre egy külön JavaScript fájlt a router számára. 
+    Például hozz létre egy userRouter.js fájlt, amelyben definiálod az útvonalakat és a hozzájuk tartozó műveleteket.
+
+    // userRouter.js
+
+const express = require('express');
+const router = express.Router();
+
+// GET /users
+router.get('/', (req, res) => {
+  // Itt kezeld a felhasználók lekérdezését
+  res.send('Ez a felhasználók oldal');
+});
+
+// POST /users
+router.post('/', (req, res) => {
+  // Itt kezeld az új felhasználó létrehozását
+  res.send('Felhasználó létrehozva');
+});
+
+module.exports = router;
+
+
+Most már integrálhatod ezt a routert az Express alkalmazásodba a fő alkalmazásfájlban (app.js vagy server.js) a use metódussal:
+
+const express = require('express');
+const app = express();
+
+// Importáljuk a userRouter-t
+const userRouter = require('./userRouter');
+
+// Használjuk a userRouter-t a /users útvonalhoz
+app.use('/users', userRouter);
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+Most az alkalmazásod /users útvonalon érhető el, és a userRouter.js-ben definiált útvonalak és
+ műveletek vannak hozzárendelve ehhez az útvonalhoz.
+*/
+
+
+
+
+
+Cookies
+
+
+
+
+
+/* 
+    A "cookie" egy kis szöveges adat, amit a webböngésző a szerverrel való kommunikáció során tárol
+     és később visszaküld a szervernek minden további kérés során. 
+     A cookie-kat gyakran használják az állapot (state) nyomon követésére azáltal, 
+     hogy információt tárolnak a felhasználó böngészőjében, ami az oldalak közötti látogatások során átjut.
+      Az Express.js keretrendszer lehetővé teszi a cookie-k használatát és kezelését a következőkben:
+
+    Cookie-k létrehozása és küldése: Az Express.js lehetővé teszi cookie-k létrehozását és 
+    küldését a kliens felé a res.cookie() függvénnyel. Például:
+
+    const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  // Cookie létrehozása és küldése a kliensnek
+  res.cookie('username', 'johnDoe');
+  res.send('Cookie elküldve a kliensnek.');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+Cookie-k fogadása és olvasása: A kliens által küldött cookie-ket az Express.js a req.cookies objektumban tárolja,
+ amelyet a cookie-k nevével párosítva olvashatsz ki. Például:
+
+ app.get('/profile', (req, res) => {
+  // A "username" névű cookie kiolvasása a kliensről
+  const username = req.cookies.username;
+  res.send(`Üdv, ${username}!`);
+});
+
+Cookie-k beállításai: A res.cookie() függvény lehetővé teszi a cookie-k paramétereinek beállítását,
+ például a lejárati időt vagy a biztonsági tulajdonságokat. Például:
+
+ res.cookie('username', 'johnDoe', { maxAge: 900000, httpOnly: true });
+
+Cookie-k törlése: A cookie-k törlésére is van lehetőség, például amikor a felhasználó kijelentkezik az alkalmazásból.
+ Erre a res.clearCookie() függvény használható. Például:
+
+ res.clearCookie('username');
+
+Cookie-k használata segíthet az alkalmazásokban az állapot nyomon követésében,
+ például a felhasználói bejelentkezési állapot tárolásában vagy egyéb személyre szabott preferenciákban. 
+ Fontos azonban észben tartani, hogy a cookie-k a kliens oldalon tárolódnak, 
+ és biztonsági szempontból érzékeny adatokat ne tároljuk bennük. 
+ Az Express.js lehetőséget biztosít arra, hogy beállítsuk a cookie-k biztonsági tulajdonságait, 
+ mint például a HttpOnly, ami megakadályozza a JavaScript hozzáférését a cookie-hoz, vagy a Secure,
+  ami csak HTTPS kapcsolaton keresztül küldi a cookie-t.
+*/
+
+
+
+
+
+Session
+
+
+
+
+
+/* 
+    Az express-session egy olyan middleware modul az Express.js keretrendszerhez,
+     amely lehetővé teszi a munkamenetek (sessions) kezelését webalkalmazásokban. 
+     A munkamenetek az állapot (state) nyomon követésére szolgálnak és lehetővé teszik, 
+     hogy az alkalmazás szerveroldalon tároljon adatokat a felhasználói munkamenet során. 
+     Az express-session segítségével az alkalmazásod képes lesz:
+
+    Felhasználó azonosítás és hitelesítés: A munkamenetek segítségével nyomon követheted a felhasználókat és azonosíthatod őket.
+     Például bejelentkezéskor létrehozhatsz egy munkamenetet a felhasználónak, és tárolhatod benne az azonosítóját
+      vagy más hasznos információkat.
+
+    Állapot tárolása: A munkamenetek lehetővé teszik az állapot és információk tárolását a kliens böngészőjében.
+     Például egy bevásárlókosárban tárolhatod a felhasználó által választott termékeket a munkamenetben.
+
+    Biztonság: A munkamenetek lehetővé teszik az érzékeny adatok (pl. jelszavak) tárolását a kliens oldalon anélkül,
+     hogy azok láthatók lennének a böngészőben vagy könnyen hozzáférhetők lennének a kliens számára.
+
+Az express-session használatához először telepítened kell a modult a projektbe:
+
+npm install express-session
+
+Ezután az Express alkalmazásodban be kell állítanod a express-session middleware-t. Például:
+
+const express = require('express');
+const session = require('express-session');
+
+const app = express();
+
+app.use(session({
+  secret: 'titkoskulcs', // Titkos kulcs a munkamenetek aláírásához
+  resave: false, // Igaz, ha mindig újra menti a munkamenetet, függetlenül attól, hogy változott-e
+  saveUninitialized: false, // Igaz, ha a munkamenetet automatikusan elmenti, ha még nincs
+  // Egyéb beállítások...
+}));
+
+// Az alkalmazás további része...
+
+Ezután az Express alkalmazásod képes lesz használni a munkameneteket. Például:
+
+// Munkamenet létrehozása és adatainak tárolása
+app.get('/bejelentkezes', (req, res) => {
+  req.session.user = 'felhasznalonev';
+  res.send('Sikeres bejelentkezés');
+});
+
+// Munkamenet adatainak olvasása
+app.get('/profil', (req, res) => {
+  const felhasznalo = req.session.user;
+  res.send(`Üdv, ${felhasznalo}!`);
+});
+
+
+*/
+
+
+
+
+hashing password
+
+
+
+
+/* 
+    A jelszavak "hashelése" egy fontos biztonsági lépés, amelyet alkalmazásokban alkalmaznak.
+     A hashelés során a jelszót egy hash-függvénnyel (pl. SHA-256) átalakítják egy olyan sorozattá,
+      amelynek hossza fix, és nem fordítható vissza a jelszó eredeti formájába. 
+      A hash-függvény általában ugyanazt az inputot mindig ugyanarra a hash-kódra képezi le, 
+      így a hash-érték alapján lehet ellenőrizni a jelszó helyességét anélkül, hogy az eredeti jelszót tárolnánk.
+
+Az Express.js keretrendszerben a jelszavak hasheléséhez gyakran használják a bcrypt nevű könyvtárat.
+
+    Telepítsd a bcrypt könyvtárat a projektbe: npm install bcrypt
+
+Az Express alkalmazásban használd a bcrypt-et a jelszavak hasheléséhez. Például:
+
+const express = require('express');
+const bcrypt = require('bcrypt');
+const app = express();
+
+// Jelszó hashelése
+const saltRounds = 10; // A "sót" 10-es roundszor használjuk a hasheléshez
+const plainPassword = 'mySecurePassword';
+
+bcrypt.hash(plainPassword, saltRounds, (err, hash) => {
+  if (err) {
+    console.error('Hashelési hiba: ', err);
+    return;
+  }
+  
+  console.log('Hashelt jelszó:', hash);
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+Amikor egy felhasználó bejelentkezik vagy regisztrál, a jelszót hashelheted és a hash-értéket mentheted az adatbázisban.
+ Például:
+
+ // Regisztráció
+const plainPassword = 'mySecurePassword';
+
+bcrypt.hash(plainPassword, saltRounds, (err, hash) => {
+  if (err) {
+    console.error('Hashelési hiba: ', err);
+    return;
+  }
+  
+  // A hash érték mentése az adatbázisba
+  const newUser = {
+    username: 'felhasznalonev',
+    passwordHash: hash,
+  };
+  
+  // Adatbázisba mentés...
+});
+
+
+Amikor egy felhasználó bejelentkezik, a megadott jelszót összehasonlíthatod a hash-értékkel a bcrypt.compare függvény segítségével.
+ Például:
+
+ // Bejelentkezés
+const plainPassword = 'megadottJelszo';
+
+// A hash-érték az adatbázisból való kiolvasás
+const storedPasswordHash = '...'; // Az adatbázisból kiolvasott hash-érték
+
+bcrypt.compare(plainPassword, storedPasswordHash, (err, result) => {
+  if (err) {
+    console.error('Összehasonlítási hiba: ', err);
+    return;
+  }
+
+  if (result) {
+    // A felhasználó sikeresen bejelentkezett
+    console.log('Sikeres bejelentkezés');
+  } else {
+    // Helytelen jelszó
+    console.log('Helytelen jelszó');
+  }
+});
+
+
+Ez az egyik legbiztonságosabb módja a jelszavak tárolásának, mivel a hashelés után a tényleges jelszót már nem tároljuk,
+ és csak a hash-értéket használjuk az azonosításhoz.
+*/
+
+
+
+
+Basic Username & Password Authentication
+
+
+
+
+/* 
+    A Basic Authentication (alapvető hitelesítés) egy egyszerű hitelesítési mechanizmus, 
+    amely a HTTP kérés fejléceiben küldi a felhasználónevet és a jelszót. 
+    Az Express.js keretrendszerben könnyen megvalósítható a Basic Authentication az express-basic-auth nevű middleware segítségével.
+     Íme egy lépésről lépésre történő útmutató, hogyan valósítsd meg a Basic Authentication-t Express-ben:
+
+    Telepítsd a express-basic-auth modult a projektbe: npm install express-basic-auth
+
+    Hozz létre egy Express alkalmazást és használd az express-basic-auth middleware-t azokban az útvonalakban,
+     ahol a Basic Authentication-t szeretnéd alkalmazni. Például:
+
+     const express = require('express');
+const basicAuth = require('express-basic-auth');
+const app = express();
+
+// Az alapvető hitelesítés middleware használata
+app.use('/private', basicAuth({
+  users: { 'felhasznalo': 'jelszo' }, // Felhasználónév és jelszó párok
+  challenge: true, // Ha nincs hitelesítési adat küldjön 401 Unauthorized választ
+  unauthorizedResponse: 'Hozzáférés megtagadva', // Egyéni hibaüzenet
+}));
+
+// Az alapvető hitelesítést igénylő útvonal
+app.get('/private', (req, res) => {
+  res.send('Biztonságos tartalom');
+});
+
+// A nyilvános útvonal
+app.get('/public', (req, res) => {
+  res.send('Nyilvános tartalom');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+A fenti példában az /private útvonalhoz az express-basic-auth middleware-t használjuk,
+ és megadjuk a felhasználóneveket és jelszavakat a users objektumban. Amikor a kliens kérés küld az /private útvonalhoz,
+  a middleware ellenőrzi a Basic Authentication hitelesítési adatokat. Ha a hitelesítés sikeres,
+   akkor a kérés továbbítódik az /private útvonalhoz. Ha a hitelesítés sikertelen, 
+   akkor a middleware egy 401 Unauthorized választ küld, és a kliensnek meg kell adnia helyes hitelesítési adatokat.
+
+Fontos megjegyezni, hogy a Basic Authentication a jelszavakat egyszerűen kodolja (nem hasheli), 
+és azokat a kérés fejlécében szövegként továbbítja. Ezért a Basic Authentication nem a legbiztonságosabb hitelesítési mód. 
+*/
+
+
+
+
+Authentication with PassportJS
+
+
+
+
+/* 
+    A Passport.js egy népszerű hitelesítési middleware a Node.js-hez és az Express.js-hez,
+     amely lehetővé teszi a különböző hitelesítési stratégiák (például helyi jelszó, OAuth, JWT stb.) használatát
+      az alkalmazásodban. Íme egy lépésről lépésre történő útmutató arról, 
+      hogyan valósítható meg az Authentication Passport.js segítségével az Express.js alkalmazásban:
+
+    Telepítsd a Passport.js és az esetleges használni kívánt Passport.js stratégiákat a projektbe. 
+    Például, ha a helyi jelszó hitelesítést szeretnéd használni,
+     telepítsd a passport-local modult: npm install passport passport-local
+
+    Hozz létre egy Express alkalmazást, és konfiguráld be a Passport.js-t. Például:
+
+    const express = require('express');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const app = express();
+
+// Alapvető middleware-ek beállítása
+app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Felhasználói adatok (ideális esetben az adatbázisból jönnének)
+const users = [
+  { id: 1, username: 'felhasznalo', password: 'jelszo' },
+  // További felhasználók...
+];
+
+// Passport beállítása a helyi jelszó hitelesítéshez
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    const user = users.find(u => u.username === username);
+
+    if (!user) {
+      return done(null, false, { message: 'Felhasználó nem található' });
+    }
+
+    if (user.password !== password) {
+      return done(null, false, { message: 'Helytelen jelszó' });
+    }
+
+    return done(null, user);
+  }
+));
+
+// Felhasználó adatainak szerializálása a munkamenetben
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+// Felhasználó adatainak visszaállítása a munkamenetből
+passport.deserializeUser((id, done) => {
+  const user = users.find(u => u.id === id);
+  done(null, user);
+});
+
+// Az autentikáció után átirányítás
+app.get('/success', (req, res) => {
+  res.send('Sikeres bejelentkezés');
+});
+
+// Az autentikáció sikertelen után átirányítás
+app.get('/failure', (req, res) => {
+  res.send('Sikertelen bejelentkezés');
+});
+
+// Bejelentkezési útvonal és Passport.js használata
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/success',
+  failureRedirect: '/failure',
+}));
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+    A fenti példa bemutatja, hogyan lehet beállítani a helyi jelszó hitelesítést a Passport.js használatával.
+     A passport.use() metódusban megadott LocalStrategy kezeli a felhasználónevet és a jelszót,
+      majd visszaadja az autentikált felhasználót vagy egy hibaüzenetet.
+
+    Az /login útvonalon keresztül történő bejelentkezésnél a Passport.js elvégzi a hitelesítést.
+     Ha sikeres, az authenitcate middleware átirányítja a felhasználót a successRedirect útvonalra,
+    ellenkező esetben a failureRedirect útvonalra.
+
+*/
+
+
+
+
+Passport Local Strategy
+
+
+
+
+
+/* 
+    A Passport Local Strategy a Passport.js egyik hitelesítési stratégiája,
+     amelyet használhatsz az Express.js alkalmazásodban a helyi jelszó alapú felhasználói hitelesítés megvalósításához.
+      A helyi jelszó alapú hitelesítés azt jelenti, hogy a felhasználók egy felhasználónév és jelszó párossal azonosíthatók,
+       és az alkalmazás saját adatbázisban tárolja ezeket a hitelesítési adatokat.
+
+A Passport Local Strategy működése a következő lépésekből áll:
+
+    Beállítás: Először be kell állítanod a Passport.js-t és az Express alkalmazásodat a helyi stratégia használatához.
+     Ehhez telepítened kell a passport és passport-local könyvtárakat, 
+     majd inicializálnod és konfigurálnod a Passport.js-t az alkalmazásodban.
+
+    Hitelesítési stratégia definiálása: A Passport Local Strategy definíciója során meg kell adnod egy függvényt,
+     amely elvégzi a felhasználó hitelesítését. Ebben a függvényben ellenőrzöd a felhasználónév és jelszó párt,
+      majd visszaadod az autentikált felhasználót vagy jelzed a hitelesítés sikertelenségét.
+
+    Middleware használata: Az Express útvonalakhoz rendelj middleware-t,
+     amelyek használják a Passport Local Strategy-t a bejelentkezés és kijelentkezés kezeléséhez. 
+     Például az Express passport.authenticate() metódusát használhatod az útvonalakon, hogy meghatározd,
+      melyik útvonalakhoz szükséges bejelentkezés.
+
+    Munkamenetkezelés: Általában használnod kell a munkameneteket (sessions) vagy token alapú autentikációt
+     az azonosított felhasználó munkamenetének nyomon követéséhez. A bejelentkezett felhasználó adatait gyakran a munkamenetben
+      vagy egy tokén keresztül tárolod, és az alkalmazás egyéb részeiben használod.
+
+Eme egy példa a Passport Local Strategy használatára Express.js alkalmazásban:
+
+const express = require('express');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+
+const app = express();
+
+// Alapvető middleware-ek beállítása
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: 'titkoskulcs', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Felhasználói adatok (ideális esetben az adatbázisból jönnének)
+const users = [
+  { id: 1, username: 'felhasznalo', password: 'jelszo' },
+  // További felhasználók...
+];
+
+// Passport Local Strategy beállítása
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    const user = users.find(u => u.username === username);
+
+    if (!user) {
+      return done(null, false, { message: 'Felhasználó nem található' });
+    }
+
+    if (user.password !== password) {
+      return done(null, false, { message: 'Helytelen jelszó' });
+    }
+
+    return done(null, user);
+  }
+));
+
+// Felhasználó adatainak szerializálása a munkamenetben
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+// Felhasználó adatainak visszaállítása a munkamenetből
+passport.deserializeUser((id, done) => {
+  const user = users.find(u => u.id === id);
+  done(null, user);
+});
+
+// Bejelentkezési útvonal és Passport használata
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/success',
+  failureRedirect: '/failure',
+}));
+
+// Sikeres bejelentkezés
+app.get('/success', (req, res) => {
+  res.send('Sikeres bejelentkezés');
+});
+
+// Sikertelen bejelentkezés
+app.get('/failure', (req, res) => {
+  res.send('Sikertelen bejelentkezés');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+
+Az alkalmazás többi részéhez használd a munkameneteket vagy egyéb autentikációs módszereket
+ azonosított felhasználók nyomon követéséhez és hozzáférési jogok kezeléséhez.
+*/
+
+
+
+
+Serialize User & Deserialize User
+
+
+
+
+
+/* 
+    Az Express.js alkalmazásokban a "serialize user" és "deserialize user" funkciók kulcsfontosságúak az azonosított felhasználók
+     munkamenetkezeléséhez, különösen az autentikáció során. Ezek a funkciók segítenek a felhasználó azonosításának
+      és állapotának nyomon követésében.
+
+    Serialize User:
+        A "serialize user" funkció a felhasználó azonosításakor vagy bejelentkezéskor kerül meghívásra.
+        A feladata a felhasználó adatainak szerializálása vagy azonosítóinak munkamenetben vagy egyéb tárolóban történő tárolása.
+         Általában a felhasználó egyedi azonosítóját (például az adatbázisban lévő egyedi azonosítót) tárolja, hogy később könnyen visszaállíthassa a felhasználót.
+        Az időközben tárolt azonosítót (általában egy cookie-ban) használja a munkamenetek során a felhasználó azonosítására.
+
+Példa serialize user funkcióra Express.js alkalmazásban:
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+
+    Deserialize User:
+        A "deserialize user" funkció a kérés feldolgozása során kerül meghívásra minden alkalommal,
+         amikor a felhasználó azonosítását ellenőrizni vagy azonosított felhasználói adatokat használni kell.
+        A feladata az, hogy a serialize user funkció által tárolt azonosítót felhasználva visszaállítsa a felhasználót.
+        A deserializált felhasználót a kérés objektumhoz csatolja (általában req.user név alatt), így az alkalmazás többi része hozzáférhet az azonosított felhasználóhoz.
+
+Példa deserialize user funkcióra Express.js alkalmazásban:
+
+passport.deserializeUser((id, done) => {
+  // Keresd meg a felhasználót az id alapján az adatbázisban
+  const user = users.find(u => u.id === id);
+
+  if (!user) {
+    return done(null, false);
+  }
+
+  return done(null, user);
+});
+
+
+Az Express.js alkalmazásokban a serialize user és deserialize user funkciók a Passport.js által használt munkamenetkezelés
+ és felhasználó azonosítás alapjai. Amikor a felhasználó bejelentkezik, a serialize user funkció elmenti az azonosítót,
+  és a deserialize user funkció visszaállítja a felhasználót minden további kérés során. 
+  Ezen keresztül az alkalmazás hozzáférhet a bejelentkezett felhasználóhoz és az ő adataihoz, például a jelenlegi
+   munkamenetben tárolt adatokhoz.
+*/
+
+
+
+
+Session Stores
+
+
+
+
+/* 
+    A "session store" (munkamenet tároló) egy olyan komponens az Express.js alkalmazásokban, amely a felhasználói munkamenetek
+     (sessions) állapotát tárolja és kezeli. A munkamenetek az állapot (state) nyomon követésére szolgálnak
+      az egyes kérések között, és lehetővé teszik a felhasználói azonosítás és az adatok tárolását a szerveroldalon.
+       A munkameneteket általában az azonosított felhasználók adatainak tárolására használják.
+
+A munkamenetek tárolása szükséges, mert HTTP alapú kommunikáció esetén a szerver nem tárolja a kliens állapotát.
+ A munkamenet tárolók különböző módon implementálhatók, például memóriában, adatbázisban, fájlrendszerben vagy külső memória
+  adattárolókban.
+
+Az Express.js keretrendszerben számos munkamenet tároló modul elérhető, például:
+
+    express-session: Az Express beépített munkamenetkezelő middleware-je. Alapvetően lehetővé teszi a munkamenetek tárolását memóriában vagy egy külső memória adattárolóban, például Redis vagy MongoDB.
+
+    cookie-session: Egy másik Express beépített munkamenetkezelő middleware-je, amely a munkamenet adatokat a kliens sütikben tárolja. Egyszerű, de kisebb adathalmazokhoz hasznos.
+
+    express-mysql-session: Egy olyan munkamenet tároló, amely lehetővé teszi a munkamenetek tárolását MySQL adatbázisban.
+
+    connect-redis: Redis adattárolót használó munkamenetkezelő middleware, amely lehetővé teszi a munkamenetek gyors és hatékony tárolását.
+
+A munkamenet tárolók fontosak az Express alkalmazásokban, mivel lehetővé teszik az állapot tárolását és azonosítást a kliens és a szerver között. Az alkalmazás állapotának megőrzéséhez és a felhasználók azonosításához a munkamenetekkel történő munka elengedhetetlen. Az alkalmazás igényeitől függően választhatsz a különböző munkamenet tárolók közül, és testre szabhatod a munkamenetkezelést a projektednek megfelelően.
+*/
+
+
+
+
+OAuth2
+
+
+
+
+
+/* 
+    Az OAuth 2.0 egy protokoll, amely lehetővé teszi a harmadik fél alkalmazásoknak (pl. webes vagy mobilalkalmazásoknak)
+     az erőforrásokhoz való hozzáférés kérelmezését a felhasználó engedélyével, de anélkül, 
+     hogy a harmadik félnek meg kellene osztania a felhasználói jelszót. Ezt a protokollt gyakran használják azonosításra és
+      az erőforrásokhoz való hozzáférés kezelésére olyan szolgáltatásokkal, mint a közösségi médiaplatformok vagy harmadik fél API-k.
+
+Az OAuth 2.0 működése az alábbi lépésekből áll, és általában a felhasználóval való interakciót foglalja magában:
+
+    Regisztráció a Szolgáltatóval:
+        Az alkalmazásfejlesztőnek (harmadik fél) regisztrálnia kell az OAuth 2.0 szolgáltatónál (pl. Google, Facebook stb.),
+         és meg kell kapnia a kliensazonosítót és a kliens titkos kulcsot.
+
+    Felhasználói Engedélykérése (Authorization Request):
+        A harmadik fél alkalmazásnak a felhasználó böngészőjét irányítania kell a szolgáltatóhoz (pl. a /auth/google útvonalra), 
+        ahol a felhasználónak engedélyt kell adnia az alkalmazásnak az erőforrásokhoz való hozzáférésre.
+        Ezt az engedélykérést az OAuth 2.0 "authorization code" vagy "implicit grant" alapján lehet végrehajtani.
+
+    Felhasználói Bejelentkezés és Engedélyezés:
+        A felhasználó bejelentkezik a szolgáltatóhoz, ha még nem tette meg, majd engedélyt ad az alkalmazásnak
+         az erőforrásokhoz való hozzáférésre.
+
+    Hozzáférési Token Lekérése (Access Token Request):
+        Miután a felhasználó engedélyezte az alkalmazást, a szolgáltató visszaküld egy kód vagy token-t az alkalmazásnak.
+
+    Hozzáférési Token Használata (Accessing Resources):
+        Az alkalmazás ezt a kódot vagy tokent használja a felhasználó nevében, hogy hozzáférjen a kívánt erőforrásokhoz
+         (pl. az adatokhoz egy API-n keresztül).
+
+A következő egy példa, hogyan valósítható meg az OAuth 2.0 Express alkalmazásban a Passport.js segítségével és
+ az "authorization code grant" alapján a Google OAuth szolgáltatóval:
+
+    Telepítsd a következő könyvtárakat: npm install express passport passport-google-oauth20 express-session
+
+
+Hozz létre egy Express alkalmazást és konfiguráld be a Passport.js-t és a Google OAuth 2.0 stratégiát. Például:
+
+const express = require('express');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
+
+const app = express();
+
+app.use(session({ secret: 'titkoskulcs', resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Regisztrálj az OAuth szolgáltatónál és add meg a kliensazonosítót és titkos kulcsot
+const CLIENT_ID = 'YOUR_CLIENT_ID';
+const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+
+passport.use(new GoogleStrategy({
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  callbackURL: '/auth/google/callback',
+},
+(accessToken, refreshToken, profile, done) => {
+  // Itt kezelheted a felhasználó profilját és az elérhető adatokat
+  return done(null, profile);
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+// Engedélykérés az OAuth szolgáltatótól
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Visszatérési útvonal a szolgáltatóból
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    // Sikeres bejelentkezés után irányítsd a felhasználót a kívánt útvonalra
+    res.redirect('/profile');
+  });
+
+// Profil megjelenítése
+app.get('/profile', (req, res) => {
+  res.send(req.user);
+});
+
+// Kijelentkezés
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+app.listen(3000, () => {
+  console.log('Az Express.js szerver fut a port 3000-on');
+});
+
+
+
+Ebben a példában a Google OAuth 2.0-t használjuk, és a Passport.js segítségével kezeljük az OAuth folyamatot. 
+Az alkalmazás engedélyt kér a felhasználótól, majd megjeleníti a felhasználó profilját az /profile útvonalon.
+ Az alkalmazás szintén támogatja a kijelentkezést az /logout útvonalon keresztül.
+
+Az OAuth 2.0 használata során fontos, hogy gondosan kövesd a szolgáltató dokumentációját,
+ és gondoskodj a biztonsági intézkedésekről az alkalmazásodban. Az OAuth protokoll segítségével lehetővé teheted harmadik fél
+  alkalmazásai számára az erőforrásaidhoz való biztonságos hozzáférést a felhasználóid nevében.
+*/
+
+
+
+
+Jest & Unit Testing
+
+
+
+
+/* 
+    Jest egy népszerű JavaScript tesztelési keretrendszer, amelyet általában a Node.js alapú alkalmazásokhoz
+     és frontend JavaScript kódhoz használnak. A Jest segítségével egységteszteket (unit tests), integrációs teszteket és
+      más teszteket hozhatsz létre JavaScript alkalmazásokhoz. Az egységtesztelés (unit testing) olyan tesztelési folyamat,
+       amely során egy adott alkotórész (általában egy függvény vagy modul) viselkedését teszteljük izoláltan,
+        különféle bemenetekre és elvárt kimenetekre.
+
+Az Express.js alkalmazások teszteléséhez a Jest keretrendszert és más segédleteket (például Supertest) használhatod.
+ Íme egy lépésről lépésre történő útmutató,
+  hogyan működik az egységtesztelés Express.js alkalmazásban a Jest segítségével: npm install jest supertest express
+
+  Hozz létre egy egységteszt fájlt:
+
+Például, ha egy Express alkalmazásban egy app.js fájlt tesztelnél,
+ akkor hozz létre egy app.test.js fájlt, ahol írod a teszteket.
+
+Írj teszteket az Express alkalmazásodhoz:
+
+Az Express alkalmazás egységtesztelésekor általában a Supertest könyvtárat használod a HTTP kérések szimulálásához,
+ majd az Express alkalmazásodat teszted. Például:
+
+ const request = require('supertest');
+const app = require('./app'); // Az Express alkalmazásod importálása
+
+describe('GET /', () => {
+  it('should respond with "Hello, World!"', async () => {
+    const response = await request(app).get('/');
+    expect(response.statusCode).toBe(200);
+    expect(response.text).toBe('Hello, World!');
+  });
+});
+
+
+Ebben a példában egy egyszerű GET kérést tesztelünk a gyökér útvonalon ('/'),
+ és ellenőrizzük a válasz státusz kódját és a válasz szövegét.
+
+ Futtasd a teszteket:
+
+Hozz létre egy package.json fájlt, és adj hozzá egy tesztelési szkriptet:
+
+{
+  "scripts": {
+    "test": "jest"
+  }
+}
+
+
+Majd futtasd a teszteket a következő paranccsal: npm test
+
+
+A Jest lefuttatja a teszteket és visszaadja az eredményeket.
+
+Test Coverage (Tesztlefedettség) készítése (opcionális):
+
+A Jest képes méricskélni a tesztlefedettséget is, vagyis azt, hogy hány százalékát tesztelted le a kódnak.
+ Ehhez adjd hozzá az alábbi konfigurációt a package.json fájlodhoz:
+
+ {
+  "jest": {
+    "collectCoverage": true
+  }
+}
+
+
+Majd futtasd a teszteket újra a npm test paranccsal, és a Jest generál egy tesztlefedettségi jelentést a kódról.
+
+
+*/

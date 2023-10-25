@@ -265,12 +265,22 @@ router.post('/', validateGroceryItem, async (request, response) => {
   }
 });
 
+// Teljes szövegű keresés endpoint
 router.get('/search/:query', async (req, res) => {
   const { query } = req.params;
 
   try {
-    // Regex keresés az "item" mezőben
-    const searchResults = await GroceryItem.find({ item: { $regex: new RegExp(query, 'i') } });
+    // Teljes szövegű keresés az "item" mezőn
+    const searchResults = await GroceryItem.aggregate([
+      {
+        $search: {
+          text: {
+            query: query,
+            path: "item",
+          },
+        },
+      },
+    ]);
 
     res.json(searchResults);
   } catch (error) {
